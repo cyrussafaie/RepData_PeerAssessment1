@@ -2,16 +2,19 @@
 title: "RepData_PeerAssessment1"
 author: "Cyrus Safaie"
 date: "August 7, 2016"
-output: html_document
+output: github_document 
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 1. Code for reading in the dataset and/or processing the data
 
 ```{r}
+library(knitr)
+library(rmarkdown)
+```
+
+
+```{r}
+
+
 activity=read.csv("activity.csv")
 activity2=subset(activity,activity$steps!="NA")
 head(activity)
