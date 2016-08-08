@@ -1,0 +1,90 @@
+---
+title: "RepData_PeerAssessment1"
+author: "Cyrus Safaie"
+date: "August 7, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1. Code for reading in the dataset and/or processing the data
+
+```{r}
+activity=read.csv("activity.csv")
+activity2=subset(activity,activity$steps!="NA")
+head(activity)
+```
+
+
+2. Histogram of the total number of steps taken each day
+
+```{r}
+ag.data=aggregate(activity2$steps, by=list(activity2$date), FUN=sum)
+dev.off()
+hist(ag.data$x)
+library(ggplot2)
+#qplot(ag.data$x)+stat_bin(bins=5)
+```
+
+
+
+3. Mean and median number of steps taken each day
+```{r}
+
+c(mean(ag.data$x),median(ag.data$x))
+
+ag.mean=aggregate(activity2$steps, by=list(activity2$date), FUN=mean)
+ag.median=aggregate(activity2$steps, by=list(activity2$date), FUN=median)
+
+```
+
+
+4. Time series plot of the average number of steps takent
+
+```{r}
+plot(ag.mean$x,type = "l")
+```
+
+5. The 5-minute interval that, on average, contains the maximum number of steps
+
+```{r}
+interval.mean=aggregate(activity2$steps, by=list(activity2$interval), FUN=mean)
+which.max(interval.mean$x)
+max(interval.mean$x)
+
+```
+
+
+6. Code to describe and show a strategy for imputing missing data
+```{r}
+# replacing na with 0
+activity[is.na(activity)]=0
+
+```
+
+7. Histogram of the total number of steps taken each day after missing values are imputed
+
+```{r}
+hist(aggregate(activity$steps, by=list(activity$date), FUN=sum)[,2])
+
+```
+
+
+8. Panel plot comparing the average number of steps taken per 5-minute interval across weekdays and weekends
+```{r}
+
+activity$wkDY=rep("weekday",length(activity$date))
+
+activity$wkDY[(weekdays(as.Date(activity$date))=="Sunday") | (weekdays(as.Date(activity$date))=="Saturday")]="weekend"
+
+
+par(mfrow = c(2, 1))
+for (type in c("weekend", "weekday")) {
+        steps.type <- aggregate(steps ~ interval, data = activity, subset = activity$wkDY == 
+                                        type, FUN = mean)
+        plot(steps.type, type = "l", main = type)
+}
+
+```
